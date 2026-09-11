@@ -30,4 +30,6 @@ void box_BottomHeader(const char* text, uint16_t color);
 void box_ChordAlternatives(const char* text, uint16_t color, int index);
 void drawScreen(const char* topHeader, const char* chordDisplay,
                const char* chordQuality, const char* bottomHeader,
-               const char* chordAlternatives[], int numAlternatives);
+               const char* chordAlternatives[], int numAlternatives,
+               int preferredCandidateIndex = -1,
+               const char* topLeftHeader = "", const char* topRightHeader = "");

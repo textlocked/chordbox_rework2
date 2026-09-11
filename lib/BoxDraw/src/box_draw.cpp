@@ -172,15 +172,41 @@ void box_TopHeader(const char* text, uint16_t color) {
         return;
     }
     previousText = text;
-    tftPrintInBox(text, {0, 0}, {320, 0}, {0, 16}, {320, 16}, color, false, false, 7, CENTER);
+    tftPrintInBox(text, 
+        {80, 0}, {240, 0}, 
+        {80, 16}, {240, 16}, color, false, false, 7, CENTER);
 }
 
-void box_ChordDisplay(const char* text, uint16_t color) {
+void box_TopLeftHeader(const char* text, uint16_t color) {
     static String previousText;
     if (previousText == text) {
         return;
     }
     previousText = text;
+    tftPrintInBox(text, 
+        {0, 0}, {80, 0}, 
+        {0, 16}, {80, 16}, color, false, false, 7, CENTER);
+}
+
+void box_TopRightHeader(const char* text, uint16_t color) {
+    static String previousText;
+    if (previousText == text) {
+        return;
+    }
+    previousText = text;
+    tftPrintInBox(text, 
+        {240, 0}, {320, 0}, 
+        {240, 16}, {320, 16}, color, false, false, 7, CENTER);
+}
+
+void box_ChordDisplay(const char* text, uint16_t color) {
+    static String previousText;
+    static uint16_t previousColor = 0;
+    if (previousText == text && previousColor == color) {
+        return;
+    }
+    previousText = text;
+    previousColor = color;
     tftPrintInBox(text, {7, 19}, {160, 19}, {7, 107}, {160, 107}, color, false, true, 44, LEFT);
 }
 
@@ -190,7 +216,7 @@ void box_ChordQuality(const char* text, uint16_t color) {
         return;
     }
     previousText = text;
-    tftPrintInBox(text, {7, 107}, {160, 107}, {7, 151}, {160, 151}, color, false, false, 12, LEFT);
+    tftPrintInBox(text, {7, 107}, {160, 107}, {7, 151}, {160, 151}, color, false, false, 9, LEFT);
 }
 
 void box_BottomHeader(const char* text, uint16_t color) {
@@ -208,10 +234,12 @@ void box_ChordAlternatives(const char* text, uint16_t color, int index) {
     }
 
     static String previousText[6];
-    if (previousText[index - 1] == text) {
+    static uint16_t previousColor[6] = {};
+    if (previousText[index - 1] == text && previousColor[index - 1] == color) {
         return;
     }
     previousText[index - 1] = text;
+    previousColor[index - 1] = color;
 
     if (index == 1) {
         tftPrintInBox(text, {160, 19}, {320, 19}, {160, 41}, {320, 41}, color, false, false, 7, LEFT);
@@ -228,14 +256,22 @@ void box_ChordAlternatives(const char* text, uint16_t color, int index) {
     }
 }
 
-void drawScreen(const char* topHeader, const char* chordDisplay, const char* chordQuality, const char* bottomHeader, const char* chordAlternatives[], int numAlternatives) {
+void drawScreen(const char* topHeader, const char* chordDisplay, const char* chordQuality, const char* bottomHeader, const char* chordAlternatives[], int numAlternatives, int preferredCandidateIndex, const char* topLeftHeader, const char* topRightHeader) {
     box_TopHeader(topHeader, TFT_WHITE);
-    box_ChordDisplay(chordDisplay, TFT_WHITE);
+    const uint16_t chordDisplayColor = preferredCandidateIndex > 0
+        ? createRGB565(200, 200, 200)
+        : TFT_WHITE;
+    box_ChordDisplay(chordDisplay, chordDisplayColor);
     box_ChordQuality(chordQuality, createRGB565(255, 255, 0));
     box_BottomHeader(bottomHeader, TFT_WHITE);
 
     for (int i = 0; i < 6; ++i) {
         const char* alternative = i < numAlternatives ? chordAlternatives[i] : "";
-        box_ChordAlternatives(alternative, createRGB565(200, 200, 200), i + 1);
+        const uint16_t alternativeColor = i == 0
+            ? createRGB565(200, 200, 200)
+            : createRGB565(120, 120, 120);
+        box_ChordAlternatives(alternative, alternativeColor, i + 1);
     }
+    box_TopLeftHeader(topLeftHeader, createRGB565(255, 255, 0));
+    box_TopRightHeader(topRightHeader, createRGB565(0, 127, 255));
 }

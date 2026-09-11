@@ -1,6 +1,6 @@
 // chord_detector.h
 #pragma once
-#include <cstdint>
+#include <stdint.h>
 
 struct ChordResult {
     uint8_t rootPc;
@@ -12,4 +12,6 @@ struct ChordResult {
     bool found;
 };
 
+uint8_t detectChordCandidates(uint16_t noteMask, uint8_t lowestPc,
+                              ChordResult* results, uint8_t maxResults);
 ChordResult detectChord(uint16_t noteMask, uint8_t lowestPc);
