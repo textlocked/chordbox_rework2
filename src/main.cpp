@@ -29,6 +29,7 @@
 #include "pico/critical_section.h" // real pico-sdk primitive, bundled with the core
 
 #include <box_draw.h> // text box custom helpers :3 
+#include <chord_detector.h>
 
 #include "Helvetica7pt7b.h"
 #include "Helvetica9pt7b.h"
