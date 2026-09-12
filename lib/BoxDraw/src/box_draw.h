@@ -17,6 +17,8 @@ struct Point {
 extern TFT_eSPI tft;
 extern int prevTextSize;
 
+void invalidateBoxDrawCache();
+
 uint16_t createRGB565(uint8_t r, uint8_t g, uint8_t b);
 
 void tftPrintInBox(const char* text, Point topleft, Point topright,

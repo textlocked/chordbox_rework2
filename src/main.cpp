@@ -73,6 +73,9 @@ static bool sustainControlEnabled = false;
 static bool sustainPedalHeld = false;
 static int lastEncoderClk = HIGH;
 static int lastEncoderSwitch = HIGH;
+static uint32_t encoderPressStartedAt = 0;
+static bool encoderHoldHandled = false;
+static uint8_t displayRotation = 3;
 static volatile bool notesDirty = true;
 
 void clearActiveNotes();
@@ -86,6 +89,14 @@ void resetChordPreference(uint16_t noteMask) {
     EEPROM.update(noteMask, 0xFF);
     EEPROM.commit();
     currentCandidateIndex = 0;
+    notesDirty = true;
+}
+
+void toggleDisplayRotation() {
+    displayRotation = displayRotation == 3 ? 1 : 3;
+    tft.setRotation(displayRotation);
+    tft.fillScreen(TFT_BLACK);
+    invalidateBoxDrawCache();
     notesDirty = true;
 }
 
@@ -111,6 +122,14 @@ void pollEncoder() {
 
     const int encoderSwitch = digitalRead(ENCODER_SW);
     if (lastEncoderSwitch == HIGH && encoderSwitch == LOW) {
+        encoderPressStartedAt = millis();
+        encoderHoldHandled = false;
+    } else if (encoderSwitch == LOW && !encoderHoldHandled
+               && millis() - encoderPressStartedAt >= 700) {
+        toggleDisplayRotation();
+        encoderHoldHandled = true;
+    } else if (lastEncoderSwitch == LOW && encoderSwitch == HIGH
+               && !encoderHoldHandled) {
         sustainControlEnabled = !sustainControlEnabled;
         if (!sustainControlEnabled) {
             sustainPedalHeld = false;
@@ -441,7 +460,7 @@ void setup1() {
     Serial1.begin(115200);
 
     tft.init();
-    tft.setRotation(3); // landscape, 320x170
+    tft.setRotation(displayRotation); // default landscape, 320x170
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
     drawScreen( // First drawScreen() is a refrence of placeholder text. If there's no data for each box, then you may use the placeholders here instead.

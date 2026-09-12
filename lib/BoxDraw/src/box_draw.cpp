@@ -17,6 +17,11 @@
 
 TFT_eSPI tft = TFT_eSPI();
 int prevTextSize = 0;
+static bool boxDrawNeedsRedraw = false;
+
+void invalidateBoxDrawCache() {
+    boxDrawNeedsRedraw = true;
+}
 
 uint16_t createRGB565(uint8_t r, uint8_t g, uint8_t b) {
     return ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3);
@@ -168,7 +173,7 @@ void tftPrintInBox(const char* text, Point topleft, Point topright, Point bottom
 
 void box_TopHeader(const char* text, uint16_t color) {
     static String previousText;
-    if (previousText == text) {
+    if (!boxDrawNeedsRedraw && previousText == text) {
         return;
     }
     previousText = text;
@@ -202,7 +207,7 @@ void box_TopRightHeader(const char* text, uint16_t color) {
 void box_ChordDisplay(const char* text, uint16_t color) {
     static String previousText;
     static uint16_t previousColor = 0;
-    if (previousText == text && previousColor == color) {
+    if (!boxDrawNeedsRedraw && previousText == text && previousColor == color) {
         return;
     }
     previousText = text;
@@ -212,7 +217,7 @@ void box_ChordDisplay(const char* text, uint16_t color) {
 
 void box_ChordQuality(const char* text, uint16_t color) {
     static String previousText;
-    if (previousText == text) {
+    if (!boxDrawNeedsRedraw && previousText == text) {
         return;
     }
     previousText = text;
@@ -221,7 +226,7 @@ void box_ChordQuality(const char* text, uint16_t color) {
 
 void box_BottomHeader(const char* text, uint16_t color) {
     static String previousText;
-    if (previousText == text) {
+    if (!boxDrawNeedsRedraw && previousText == text) {
         return;
     }
     previousText = text;
@@ -235,7 +240,7 @@ void box_ChordAlternatives(const char* text, uint16_t color, int index) {
 
     static String previousText[6];
     static uint16_t previousColor[6] = {};
-    if (previousText[index - 1] == text && previousColor[index - 1] == color) {
+    if (!boxDrawNeedsRedraw && previousText[index - 1] == text && previousColor[index - 1] == color) {
         return;
     }
     previousText[index - 1] = text;
@@ -274,4 +279,5 @@ void drawScreen(const char* topHeader, const char* chordDisplay, const char* cho
     }
     box_TopLeftHeader(topLeftHeader, createRGB565(255, 255, 0));
     box_TopRightHeader(topRightHeader, createRGB565(0, 127, 255));
+    boxDrawNeedsRedraw = false;
 }
