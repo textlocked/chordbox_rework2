@@ -1,15 +1,5 @@
 # ChordBox Rework 2
 
-I am a music producer that just happens to have robotics as their hobby. Or the other way around, really. Both weigh the same, but I am more into arts... and maths, well, still the same weight.
-
-I created this project because I wanted a simple, fast way to look up what the chord I just played on my keyboard was. I sometimes improvise something and hit a very beautiful chord, and I could not really spend my time searching Google to find out what that chord was. So, why not make it an instant screen that I could put right on my keyboard?
-
-I also created this because MIDI chord detection is usually software: something downloadable to a device, usually a desktop computer. I wanted this to be a portable chord lookupper. Useful when doing gigs, eh?
-
-Anyway, enough storytelling. Here is how to set it up on an RP2040 microcontroller.
-
-## What It Does
-
 ChordBox is a standalone MIDI chord display built around a Raspberry Pi Pico/RP2040. It:
 
 - Hosts a USB MIDI keyboard through the Pico's native USB-C port.
@@ -19,6 +9,16 @@ ChordBox is a standalone MIDI chord display built around a Raspberry Pi Pico/RP2
 - Lets the encoder select and save a preferred chord interpretation for a note set.
 - Toggles the TFT orientation between rotations 3 and 1 when the KY040 button is held.
 - Keeps USB MIDI servicing on one RP2040 core and the display/UI work on the other.
+
+## Why I Made This
+
+I am a music producer that just happens to have robotics as their hobby. Or the other way around, really. Both weigh the same, but I am more into arts... and maths, well, still the same weight.
+
+I created this project because I wanted a simple, fast way to look up what the chord I just played on my keyboard was. I sometimes improvise something and hit a very beautiful chord, and I could not really spend my time searching Google to find out what that chord was. So, why not make it an instant screen that I could put right on my keyboard?
+
+I also created this because MIDI chord detection is usually software: something downloadable to a device, usually a desktop computer. I wanted this to be a portable chord lookupper. Useful when doing gigs, eh?
+
+Anyway, enough storytelling. Here is how to set it up on an RP2040 microcontroller.
 
 ## Hardware
 
